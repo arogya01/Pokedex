@@ -1,0 +1,16 @@
+.dots {
+  width: 12px;
+  height: 12px;
+  background: currentColor;
+  border-radius: 50%;
+  box-shadow: 12px 0 currentColor, -24px 0 currentColor;
+  animation: d6 1s infinite linear alternate;
+}
+@keyframes d6 {
+  50% {
+    box-shadow: 12px 0 currentColor, -12px 0 currentColor;
+  }
+  100% {
+    box-shadow: 24px 0 currentColor, -12px 0 currentColor;
+  }
+}

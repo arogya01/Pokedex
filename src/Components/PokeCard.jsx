@@ -5,6 +5,7 @@ import {
   makeStyles,
 } from "@material-ui/core/styles";
 import { filterContext } from "../App";
+import {Loading} from './Loading';
 
 import { Typography, CssBaseline, Grid, CardContent,Card } from "@material-ui/core";
 
@@ -27,6 +28,8 @@ const useStyles = makeStyles({
     display: "flex",
     flexFlow: "row wrap",
     justifyContent: "center",
+    padding:0,
+    margin:0,
   },
   root: {
     width: 200,
@@ -34,25 +37,42 @@ const useStyles = makeStyles({
     borderRadius: 16,
     padding:16,
     margin:16,
-    listStyle:'none',
     background: "linear-gradient(rgb(168, 255, 152), rgb(214, 162, 228))",
+  },
+  list:{ 
+    listStyle:'none',
   },
   header: {
     fontSize: 25,
     fontWeight: "bold",
     textAlign: "center",
+    padding:'12 0'
   },
   image: {
     width: 120,
     height: 120,
+    padding:"12 0",
   },
 });
 
 export const PokeCard = () => {
   const [pokemonDetail, setPokemonDetail] = useState([]);
   const [pokemonArray, setPokemonArray] = useState([]);
+  const [isLoaded,setIsLoaded]=useState(false);
   const classes = useStyles();
-  const { regions, value } = useContext(filterContext);
+  const { regions, value,types } = useContext(filterContext);
+
+
+
+  // useEffect(()=>{
+    
+  //   fetch(`https://pokeapi.co/api/v2/region/${value}`)
+  //   .then(res=>res.json)
+  //   .then(data =>)
+
+  // },[value])
+
+
 
   useEffect(() => {
     fetchPokedex();
@@ -71,32 +91,39 @@ export const PokeCard = () => {
       const regionData = await regionDetails.json();
       const pokemon_species = regionData.pokemon_species;
       console.log(pokemon_species);
-      setPokemonDetail(pokemon_species);
+      setPokemonDetail([pokemonDetail,...pokemon_species]);
+      console.log(pokemonDetail);
       fetchPokemon(pokemon_species);
     }
 
-    function fetchPokemon(pokemonDetail) {
-      console.log(pokemonDetail);
-      pokemonDetail.forEach(async (pokemon) => {
+    function fetchPokemon(pokemon_species) {
+      setPokemonArray([]);
+      pokemon_species.forEach(async (pokemon) => {
         const pokeDetailsUrl = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemon.name}`);
         const data = await pokeDetailsUrl.json();
         setPokemonArray((pokemonArray) => [...pokemonArray, data]);
       });
+
+      setIsLoaded(!isLoaded);
     }
   }, [value]);
 
+  if(!isLoaded){
+    return <Loading />
+  }
+  else{
   return (
     <>
       <CssBaseline />
       <ThemeProvider theme={theme}>
-        
+
           <ul className={classes.wrapper}>
           {pokemonArray.map((pokemon) => {
             return (
-              <li className={classes.root} key={pokemon.name}>
-                <Card variant='outlined'>
-              <CardContent>
-                <img className={classes.image} src={pokemon.sprites.other.dream_world.front_default} alt="pokemon img" />
+              <li className={classes.list} key={pokemon.name}>
+                <Card  className={classes.root}>
+              <CardContent >
+                <img className={classes.image} loading="lazy" src={pokemon.sprites.other.dream_world.front_default} alt="pokemon img" />
                 <Typography  className={classes.header} variant="h3">{pokemon.name}</Typography>
                 
               </CardContent> 
@@ -109,4 +136,5 @@ export const PokeCard = () => {
       </ThemeProvider>
     </>
   );
+        }
 };
