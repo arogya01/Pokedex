@@ -71,14 +71,20 @@ function App() {
   const [darkMode, setdarkMode] = useState(false);
   const paletteType=darkMode ? 'dark':'light';
 
-  const [value, setValue] = useState(regions[0].name);
+  const [regionValue, setRegionValue] = useState(regions[0].name);
+  const [typeValue,setTypeValue]=useState(null);
+  const [sortbyValue,setsortbyValue]=useState(null);
 
   const val = {
     regions,
     types,
     sortBy,
-    value,
-    setValue
+    regionValue,
+    setRegionValue,
+    typeValue,
+    setTypeValue,
+    sortbyValue,
+    setsortbyValue
   };
 
 
